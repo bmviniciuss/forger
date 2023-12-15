@@ -31,7 +31,8 @@ func main() {
 					"id": "$requestVar('id')", 
 					"page": "$requestParameter('page')",
 					"client_id": "$requestHeader('client-id')",
-					"random_uuid": "$uuid"
+					"random_uuid": "$uuid",
+					"time": "$iso8601"
 				}`,
 				Delay: time.Duration(0) * time.Millisecond,
 				Headers: map[string]string{

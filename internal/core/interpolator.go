@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -25,11 +26,21 @@ type GeneratorFunction struct {
 	generator func() string
 }
 
+const (
+	utcTimeLayout = "2006-01-02T15:04:05.000Z"
+)
+
 var (
 	uuidGeneratorFunction = GeneratorFunction{
 		regex: regexp.MustCompile(`\$uuid`),
 		generator: func() string {
 			return uuid.NewString()
+		},
+	}
+	iso8601GeneratorFunction = GeneratorFunction{
+		regex: regexp.MustCompile(`\$iso8601`),
+		generator: func() string {
+			return time.Now().Format(utcTimeLayout)
 		},
 	}
 )
@@ -65,7 +76,7 @@ func InterpolateString(input string, r *http.Request) string {
 		result = f(result, r)
 	}
 
-	generators := []GeneratorFunction{uuidGeneratorFunction}
+	generators := []GeneratorFunction{uuidGeneratorFunction, iso8601GeneratorFunction}
 	for _, g := range generators {
 		result = processGeneratorFunction(result, g)
 	}
