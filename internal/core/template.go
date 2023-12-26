@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"text/template"
@@ -29,15 +28,12 @@ func ProcessString(r *http.Request, rr RouteResponse) (*string, error) {
 		}).
 		Parse(rr.Body)
 	if err != nil {
-		fmt.Println("err", err)
-
 		return nil, err
 	}
 
 	builder := &strings.Builder{}
 	err = t.Execute(builder, r)
 	if err != nil {
-		fmt.Println("err", err)
 		return nil, err
 	}
 	result := builder.String()
