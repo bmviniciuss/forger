@@ -45,7 +45,7 @@ func main() {
 		},
 	}
 
-	r := mux.New(defs)
+	r := mux.NewStaticRouter(defs)
 	fmt.Println("Server started at http://localhost:3000")
 	http.ListenAndServe(":3000", r)
 }

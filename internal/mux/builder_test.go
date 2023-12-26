@@ -37,7 +37,7 @@ func TestMux_Body_UUID_Generator(t *testing.T) {
 	}
 
 	t.Run("[uuid] should generate uuid in request", func(t *testing.T) {
-		mux := New(defs)
+		mux := NewStaticRouter(defs)
 		itemID := uuid.NewString()
 		req, err := http.NewRequest("GET", fmt.Sprintf("/item/%s", itemID), nil)
 		if err != nil {
@@ -56,7 +56,7 @@ func TestMux_Body_UUID_Generator(t *testing.T) {
 	})
 
 	t.Run("[uuid] should generate uuid of type ulid in request", func(t *testing.T) {
-		mux := New([]core.RouteDefinition{
+		mux := NewStaticRouter([]core.RouteDefinition{
 			{
 				Path:   "/item/{id}",
 				Method: "GET",
@@ -90,7 +90,7 @@ func TestMux_Body_UUID_Generator(t *testing.T) {
 
 func TestMux_Body_RequestVar(t *testing.T) {
 	t.Run("[requestVar] should access request var", func(t *testing.T) {
-		mux := New([]core.RouteDefinition{
+		mux := NewStaticRouter([]core.RouteDefinition{
 			{
 				Path:   "/item/{id}",
 				Method: "GET",
@@ -120,7 +120,7 @@ func TestMux_Body_RequestVar(t *testing.T) {
 	})
 
 	t.Run("[requestVar] should return empty value if parameter does not exists", func(t *testing.T) {
-		mux := New([]core.RouteDefinition{
+		mux := NewStaticRouter([]core.RouteDefinition{
 			{
 				Path:   "/item/{id}",
 				Method: "GET",
@@ -150,7 +150,7 @@ func TestMux_Body_RequestVar(t *testing.T) {
 
 func TestMux_Body_RequestHeader(t *testing.T) {
 	t.Run("[requestHeader] should access request header", func(t *testing.T) {
-		mux := New([]core.RouteDefinition{
+		mux := NewStaticRouter([]core.RouteDefinition{
 			{
 				Path:   "/item",
 				Method: "GET",
@@ -182,7 +182,7 @@ func TestMux_Body_RequestHeader(t *testing.T) {
 	})
 
 	t.Run("[requestHeader] should return empty value if header is not present", func(t *testing.T) {
-		mux := New([]core.RouteDefinition{
+		mux := NewStaticRouter([]core.RouteDefinition{
 			{
 				Path:   "/item",
 				Method: "GET",
@@ -214,7 +214,7 @@ func TestMux_Body_RequestHeader(t *testing.T) {
 
 func TestMux_Body_RequestQuery(t *testing.T) {
 	t.Run("should access request query params", func(t *testing.T) {
-		mux := New([]core.RouteDefinition{
+		mux := NewStaticRouter([]core.RouteDefinition{
 			{
 				Path:   "/item",
 				Method: "GET",
@@ -243,7 +243,7 @@ func TestMux_Body_RequestQuery(t *testing.T) {
 	})
 
 	t.Run("should return empty value if not provided", func(t *testing.T) {
-		mux := New([]core.RouteDefinition{
+		mux := NewStaticRouter([]core.RouteDefinition{
 			{
 				Path:   "/item",
 				Method: "GET",

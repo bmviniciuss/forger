@@ -9,6 +9,7 @@ import (
 	"github.com/bmviniciuss/forger-golang/internal/ctx"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/render"
 	"github.com/google/uuid"
 )
 
@@ -39,26 +40,54 @@ func startTime(h http.Handler) http.Handler {
 	})
 }
 
-func New(defs []core.RouteDefinition) *chi.Mux {
+func NewStaticRouter(defs []core.RouteDefinition) *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(startTime)
 	r.Use(requestID)
 	r.Use(middleware.Logger)
+	registerRoutes(r, defs)
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		w.Header().Set("x-forger-req-end", time.Now().Format(utcLayout))
+		render.JSON(w, r, NewNotFoundResponse())
+	})
+	return r
+}
 
+func NewDynamicRouter(providerFn func(r *http.Request) ([]core.RouteDefinition, error)) *chi.Mux {
+	router := chi.NewRouter()
+	router.Use(startTime)
+	router.Use(requestID)
+	router.Use(middleware.Logger)
+	router.HandleFunc("/*", func(w http.ResponseWriter, r *http.Request) {
+		defs, err := providerFn(r)
+		if err != nil {
+			render.JSON(w, r, NewInternalErrorResponse("Internal Server Error", "Error while getting route definitions from provider"))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		subRouter := chi.NewRouter()
+		registerRoutes(subRouter, defs)
+		subRouter.ServeHTTP(w, r)
+	})
+	return router
+}
+
+func registerRoutes(r *chi.Mux, defs []core.RouteDefinition) {
 	for _, def := range defs {
 		fmt.Println("Registering route", def.Method, def.Path)
 		r.Method(def.Method, def.Path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			body, err := def.Response.BuildResponseBody(r)
 			if err != nil {
+				render.JSON(w, r, NewInternalErrorResponse("Internal Server Error", err.Error()))
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte(err.Error()))
 				return
 			}
 			resCode := def.Response.BuildResponseStatusCode()
 			resHeaders, err := def.Response.BuildHeaders(r)
 			if err != nil {
+				render.JSON(w, r, NewInternalErrorResponse("Internal Server Error", err.Error()))
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte(err.Error()))
 				return
 			}
 			for k, v := range resHeaders {
@@ -72,6 +101,4 @@ func New(defs []core.RouteDefinition) *chi.Mux {
 			w.Write([]byte(*body))
 		}))
 	}
-
-	return r
 }
