@@ -15,15 +15,15 @@ type RouteResponse struct {
 	Delay      time.Duration
 }
 
-func (rr RouteResponse) BuildResponseBody(r *http.Request) string {
-	if rr.Type == RESPONSE_TYPE_STATIC {
-		return rr.Body
+func (rr RouteResponse) BuildResponseBody(r *http.Request) (*string, error) {
+	switch rr.Type {
+	case RESPONSE_TYPE_STATIC:
+		return &rr.Body, nil
+	case RESPONSE_TYPE_DYNAMIC:
+		return BuildBody(r, rr)
+	default:
+		return nil, ErrResponseNotImplemented
 	}
-	if rr.Type == RESPONSE_TYPE_DYNAMIC {
-		return InterpolateString(rr.Body, r)
-	}
-
-	return `{"error":"Not implemented"}`
 }
 
 func (rr RouteResponse) BuildResponseStatusCode() int {
