@@ -20,6 +20,9 @@ func BuildBody(r *http.Request, rr RouteResponse) (*string, error) {
 				val := chi.URLParam(r, name)
 				return val
 			},
+			"requestHeader": func(key string) string {
+				return r.Header.Get(key)
+			},
 		}).
 		Parse(rr.Body)
 	if err != nil {

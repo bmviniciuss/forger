@@ -147,3 +147,67 @@ func TestMux_RequestVar(t *testing.T) {
 		assert.Equal(t, "", m["id"])
 	})
 }
+
+func TestMux_Body_RequestHeader(t *testing.T) {
+	t.Run("[requestHeader] should access request header", func(t *testing.T) {
+		mux := New([]core.RouteDefinition{
+			{
+				Path:   "/item",
+				Method: "GET",
+				Response: core.RouteResponse{
+					Type:       core.RESPONSE_TYPE_DYNAMIC,
+					StatusCode: 200,
+					Body: `{
+						"id": "{{ requestHeader "client-id" }}"
+					}`,
+				},
+			},
+		})
+		rr := httptest.NewRecorder()
+		req, err := http.NewRequest("GET", "/item", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		clientID := uuid.NewString()
+		req.Header.Set("client-id", clientID)
+		mux.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+		m := StringToMap(rr.Body.String())
+		_, ok := m["id"]
+		assert.True(t, ok)
+		_, ok = m["id"].(string)
+		assert.True(t, ok)
+		assert.Equal(t, clientID, m["id"])
+	})
+
+	t.Run("[requestHeader] should return empty value if header is not present", func(t *testing.T) {
+		mux := New([]core.RouteDefinition{
+			{
+				Path:   "/item",
+				Method: "GET",
+				Response: core.RouteResponse{
+					Type:       core.RESPONSE_TYPE_DYNAMIC,
+					StatusCode: 200,
+					Body: `{
+						"id": "{{ requestHeader "client-id" }}"
+					}`,
+				},
+			},
+		})
+		rr := httptest.NewRecorder()
+		req, err := http.NewRequest("GET", "/item", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		mux.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+		m := StringToMap(rr.Body.String())
+		_, ok := m["id"]
+		assert.True(t, ok)
+		_, ok = m["id"].(string)
+		assert.True(t, ok)
+		assert.Equal(t, "", m["id"])
+	})
+}
