@@ -23,6 +23,9 @@ func BuildBody(r *http.Request, rr RouteResponse) (*string, error) {
 			"requestHeader": func(key string) string {
 				return r.Header.Get(key)
 			},
+			"requestQuery": func(key string) string {
+				return r.URL.Query().Get(key)
+			},
 		}).
 		Parse(rr.Body)
 	if err != nil {

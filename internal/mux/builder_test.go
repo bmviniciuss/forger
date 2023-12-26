@@ -211,3 +211,63 @@ func TestMux_Body_RequestHeader(t *testing.T) {
 		assert.Equal(t, "", m["id"])
 	})
 }
+
+func TestMux_Body_RequestQuery(t *testing.T) {
+	t.Run("should access request query params", func(t *testing.T) {
+		mux := New([]core.RouteDefinition{
+			{
+				Path:   "/item",
+				Method: "GET",
+				Response: core.RouteResponse{
+					Type:       core.RESPONSE_TYPE_DYNAMIC,
+					StatusCode: 200,
+					Body: `{
+						"page": "{{ requestQuery "page" }}"
+					}`,
+				},
+			},
+		})
+		rr := httptest.NewRecorder()
+		req, err := http.NewRequest("GET", "/item?page=10", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		mux.ServeHTTP(rr, req)
+		assert.Equal(t, http.StatusOK, rr.Code)
+		m := StringToMap(rr.Body.String())
+		_, ok := m["page"]
+		assert.True(t, ok)
+		_, ok = m["page"].(string)
+		assert.True(t, ok)
+		assert.Equal(t, "10", m["page"])
+	})
+
+	t.Run("should return empty value if not provided", func(t *testing.T) {
+		mux := New([]core.RouteDefinition{
+			{
+				Path:   "/item",
+				Method: "GET",
+				Response: core.RouteResponse{
+					Type:       core.RESPONSE_TYPE_DYNAMIC,
+					StatusCode: 200,
+					Body: `{
+						"page": "{{ requestQuery "page" }}"
+					}`,
+				},
+			},
+		})
+		rr := httptest.NewRecorder()
+		req, err := http.NewRequest("GET", "/item", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		mux.ServeHTTP(rr, req)
+		assert.Equal(t, http.StatusOK, rr.Code)
+		m := StringToMap(rr.Body.String())
+		_, ok := m["page"]
+		assert.True(t, ok)
+		_, ok = m["page"].(string)
+		assert.True(t, ok)
+		assert.Equal(t, "", m["page"])
+	})
+}
