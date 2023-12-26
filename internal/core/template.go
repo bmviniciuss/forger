@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/bmviniciuss/forger-golang/internal/core/generators"
+	"github.com/go-chi/chi/v5"
 )
 
 func BuildBody(r *http.Request, rr RouteResponse) (*string, error) {
@@ -14,6 +15,10 @@ func BuildBody(r *http.Request, rr RouteResponse) (*string, error) {
 		Funcs(template.FuncMap{
 			"uuid": func(options ...interface{}) (string, error) {
 				return generators.UUID(r.Context(), options...)
+			},
+			"requestVar": func(name string) string {
+				val := chi.URLParam(r, name)
+				return val
 			},
 		}).
 		Parse(rr.Body)

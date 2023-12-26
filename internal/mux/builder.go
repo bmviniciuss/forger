@@ -48,7 +48,12 @@ func New(defs []core.RouteDefinition) *chi.Mux {
 	for _, def := range defs {
 		fmt.Println("Registering route", def.Method, def.Path)
 		r.Method(def.Method, def.Path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			body := def.Response.BuildResponseBody(r)
+			body, err := def.Response.BuildResponseBody(r)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte(err.Error()))
+				return
+			}
 			resCode := def.Response.BuildResponseStatusCode()
 			for k, v := range def.Response.BuildHeaders(r) {
 				w.Header().Set(k, v)
@@ -58,7 +63,7 @@ func New(defs []core.RouteDefinition) *chi.Mux {
 			}
 			w.Header().Set("x-forger-req-end", time.Now().Format(utcLayout))
 			w.WriteHeader(resCode)
-			w.Write([]byte(body))
+			w.Write([]byte(*body))
 		}))
 	}
 
