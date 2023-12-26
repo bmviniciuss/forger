@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -37,15 +36,18 @@ func (rr RouteResponse) BuildResponseStatusCode() int {
 	}
 }
 
-func (rr RouteResponse) BuildHeaders(r *http.Request) map[string]string {
+func (rr RouteResponse) BuildHeaders(r *http.Request) (map[string]string, error) {
 	headers := make(map[string]string)
 	for name, value := range rr.Headers {
-		fmt.Println(name, value)
-		if strings.Contains(value, "$") {
-			headers[name] = InterpolateString(value, r)
+		if strings.Contains(value, "{{") {
+			val, err := ProcessString(r, rr)
+			if err != nil {
+				return nil, err
+			}
+			headers[name] = *val
 		} else {
 			headers[name] = value
 		}
 	}
-	return headers
+	return headers, nil
 }

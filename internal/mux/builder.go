@@ -55,7 +55,13 @@ func New(defs []core.RouteDefinition) *chi.Mux {
 				return
 			}
 			resCode := def.Response.BuildResponseStatusCode()
-			for k, v := range def.Response.BuildHeaders(r) {
+			resHeaders, err := def.Response.BuildHeaders(r)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte(err.Error()))
+				return
+			}
+			for k, v := range resHeaders {
 				w.Header().Set(k, v)
 			}
 			if def.Response.Delay > 0 {
