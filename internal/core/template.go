@@ -25,6 +25,9 @@ func ProcessString(r *http.Request, rr RouteResponse) (*string, error) {
 			"requestQuery": func(key string) string {
 				return r.URL.Query().Get(key)
 			},
+			"time": func(options ...interface{}) (string, error) {
+				return generators.Time(r.Context(), options...)
+			},
 		}).
 		Parse(rr.Body)
 	if err != nil {
