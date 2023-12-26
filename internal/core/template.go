@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func BuildBody(r *http.Request, rr RouteResponse) (*string, error) {
+func ProcessString(r *http.Request, rr RouteResponse) (*string, error) {
 	t, err := template.New("").
 		Funcs(template.FuncMap{
 			"uuid": func(options ...interface{}) (string, error) {

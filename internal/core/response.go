@@ -20,7 +20,7 @@ func (rr RouteResponse) BuildResponseBody(r *http.Request) (*string, error) {
 	case RESPONSE_TYPE_STATIC:
 		return &rr.Body, nil
 	case RESPONSE_TYPE_DYNAMIC:
-		return BuildBody(r, rr)
+		return ProcessString(r, rr)
 	default:
 		return nil, ErrResponseNotImplemented
 	}
