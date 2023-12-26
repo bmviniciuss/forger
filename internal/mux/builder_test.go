@@ -21,7 +21,7 @@ func StringToMap(str string) map[string]interface{} {
 	return m
 }
 
-func TestMux_UUID_Generator(t *testing.T) {
+func TestMux_Body_UUID_Generator(t *testing.T) {
 	defs := []core.RouteDefinition{
 		{
 			Path:   "/item/{id}",
@@ -88,7 +88,7 @@ func TestMux_UUID_Generator(t *testing.T) {
 
 }
 
-func TestMux_RequestVar(t *testing.T) {
+func TestMux_Body_RequestVar(t *testing.T) {
 	t.Run("[requestVar] should access request var", func(t *testing.T) {
 		mux := New([]core.RouteDefinition{
 			{
