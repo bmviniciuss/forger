@@ -41,17 +41,17 @@ func startTime(h http.Handler) http.Handler {
 }
 
 func NewStaticRouter(defs []core.RouteDefinition) *chi.Mux {
-	r := chi.NewRouter()
-	r.Use(startTime)
-	r.Use(requestID)
-	r.Use(middleware.Logger)
-	registerRoutes(r, defs)
-	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNotFound)
+	router := chi.NewRouter()
+	router.Use(startTime)
+	router.Use(requestID)
+	router.Use(middleware.Logger)
+	registerRoutes(router, defs)
+	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("x-forger-req-end", time.Now().Format(utcLayout))
+		render.Status(r, http.StatusNotFound)
 		render.JSON(w, r, NewNotFoundResponse())
 	})
-	return r
+	return router
 }
 
 func NewDynamicRouter(providerFn func(r *http.Request) ([]core.RouteDefinition, error)) *chi.Mux {
@@ -70,13 +70,20 @@ func NewDynamicRouter(providerFn func(r *http.Request) ([]core.RouteDefinition, 
 		registerRoutes(subRouter, defs)
 		subRouter.ServeHTTP(w, r)
 	})
+	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("x-forger-req-end", time.Now().Format(utcLayout))
+		render.Status(r, http.StatusNotFound)
+		render.JSON(w, r, NewNotFoundResponse())
+	})
 	return router
 }
 
-func registerRoutes(r *chi.Mux, defs []core.RouteDefinition) {
-	for _, def := range defs {
-		fmt.Println("Registering route", def.Method, def.Path)
-		r.Method(def.Method, def.Path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func registerRoutes(router *chi.Mux, defs []core.RouteDefinition) {
+	for _, route := range defs {
+		def := route
+		fmt.Printf("Registering route [%+v]\n\n", def)
+		router.Method(def.Method, def.Path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fmt.Printf("Handling route %+v\n\n", def)
 			body, err := def.Response.BuildResponseBody(r)
 			if err != nil {
 				render.JSON(w, r, NewInternalErrorResponse("Internal Server Error", err.Error()))
