@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/bmviniciuss/forger-golang/internal/core"
 	"github.com/bmviniciuss/forger-golang/internal/mux"
@@ -12,34 +11,33 @@ import (
 func main() {
 	defs := []core.RouteDefinition{
 		{
-			Path:   "/item",
+			Path:   "/items",
 			Method: "GET",
 			Response: core.RouteResponse{
 				Type:       core.RESPONSE_TYPE_STATIC,
 				StatusCode: 200,
-				Body:       "{id: 1, name: 'Item 1'}",
+				Body:       `{"id": 1, "name": "Item 1"}`,
 				Headers:    map[string]string{"Content-Type": "application/json"},
 			},
 		},
 		{
-			Path:   "/item/{id}",
+			Path:   "/items/{id}",
 			Method: "GET",
 			Response: core.RouteResponse{
 				Type:       core.RESPONSE_TYPE_DYNAMIC,
-				StatusCode: 200,
+				StatusCode: http.StatusTeapot,
 				Body: `{
-					"id": "$requestVar('id')", 
-					"page": "$requestParameter('page')",
-					"client_id": "$requestHeader('client-id')",
-					"random_uuid": "$uuid",
-					"time": "$iso8601"
+					"id": "{{ requestVar "id"}}",
+					"page": "{{ requestQuery "page" }}",
+					"client_id": "{{ requestHeader "client-id" }}",
+					"random_uuid": "{{ uuid "ulid" }}",
+					"time": "{{ time "iso8601" }}"
 				}`,
-				Delay: time.Duration(0) * time.Millisecond,
 				Headers: map[string]string{
 					"Content-Type":  "application/json",
-					"Item-ID":       "$requestVar('id')",
-					"page":          "$requestParameter('page')",
-					"res-client-id": "$requestHeader('client-id')",
+					"Item-ID":       `{{ requestVar "id"}}`,
+					"page":          `{{ requestQuery "page" }}`,
+					"res-client-id": `{{ requestHeader "client-id" }}`,
 				},
 			},
 		},
