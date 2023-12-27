@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func ProcessString(r *http.Request, rr RouteResponse) (*string, error) {
+func ProcessString(r *http.Request, src string) (*string, error) {
 	t, err := template.New("").
 		Funcs(template.FuncMap{
 			"uuid": func(options ...interface{}) (string, error) {
@@ -29,7 +29,7 @@ func ProcessString(r *http.Request, rr RouteResponse) (*string, error) {
 				return generators.Time(r.Context(), options...)
 			},
 		}).
-		Parse(rr.Body)
+		Parse(src)
 	if err != nil {
 		return nil, err
 	}

@@ -19,7 +19,7 @@ func (rr RouteResponse) BuildResponseBody(r *http.Request) (*string, error) {
 	case RESPONSE_TYPE_STATIC:
 		return &rr.Body, nil
 	case RESPONSE_TYPE_DYNAMIC:
-		return ProcessString(r, rr)
+		return ProcessString(r, rr.Body)
 	default:
 		return nil, ErrResponseNotImplemented
 	}
@@ -40,7 +40,7 @@ func (rr RouteResponse) BuildHeaders(r *http.Request) (map[string]string, error)
 	headers := make(map[string]string)
 	for name, value := range rr.Headers {
 		if strings.Contains(value, "{{") {
-			val, err := ProcessString(r, rr)
+			val, err := ProcessString(r, value)
 			if err != nil {
 				return nil, err
 			}
