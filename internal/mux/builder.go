@@ -79,6 +79,10 @@ func NewDynamicRouter(providerFn func(r *http.Request) ([]core.RouteDefinition, 
 }
 
 func registerRoutes(router *chi.Mux, defs []core.RouteDefinition) {
+	baseHeaders := map[string]string{
+		"Content-Type": "application/json",
+	}
+
 	for _, route := range defs {
 		def := route
 		fmt.Printf("Registering route [%+v]\n\n", def)
@@ -96,6 +100,9 @@ func registerRoutes(router *chi.Mux, defs []core.RouteDefinition) {
 				render.JSON(w, r, NewInternalErrorResponse("Internal Server Error", err.Error()))
 				w.WriteHeader(http.StatusInternalServerError)
 				return
+			}
+			for k, v := range baseHeaders {
+				w.Header().Set(k, v)
 			}
 			for k, v := range resHeaders {
 				w.Header().Set(k, v)
