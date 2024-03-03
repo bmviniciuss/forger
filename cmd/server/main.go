@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/bmviniciuss/forger-golang/internal/core"
-	"github.com/bmviniciuss/forger-golang/internal/mux"
+	"github.com/bmviniciuss/forger-golang/mux"
 )
 
 func main() {
