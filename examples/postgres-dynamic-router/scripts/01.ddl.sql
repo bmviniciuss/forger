@@ -22,8 +22,26 @@ create index if not exists idx_routes_prefix on forger.routes (prefix);
 create unique index if not exists idx_routes_path_method on forger.routes(path, method);
 
 
-insert into forger.routes 
-(name, path, prefix, method, response_type, response_status_code, response_body, response_headers)
-values
-('Get all users', '/users', '/users', 'GET', 'STATIC', 200, '[]', '{}'),
-('Get user by id', '/users/:id', '/users', 'GET', 'STATIC', 200, '{}', '{}');
+ insert into forger.routes 
+ (name, path, prefix, method, response_type, response_status_code, response_body, response_headers)
+ values
+  (
+   'Get all items', 
+   '/items', 
+   '/items', 
+   'GET', 
+   'DYNAMIC', 
+   200, 
+   '{"id":1,"name":"Item 1"}', 
+   '{"Content-Type": "application/json"}'
+ ),
+ (
+   'Get item by id', 
+   '/items/{id}', 
+   '/items', 
+   'GET', 
+   'DYNAMIC', 
+   200, 
+   '{"id": "{{ requestVar "id"}}","page": "{{ requestQuery "page" }}", "client_id": "{{ requestHeader "client-id" }}", "random_uuid": "{{ uuid "ulid" }}", "time": "{{ time "iso8601" }}"}', 
+   '{"Content-Type":"application/json","Item-ID":"{{ requestVar \"id\"}}","page":"{{ requestQuery \"page\" }}","res-client-id":"{{ requestHeader \"client-id\" }}"}'
+ );
