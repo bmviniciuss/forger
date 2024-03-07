@@ -24,7 +24,7 @@ func NewStaticRouter(defs []core.RouteDefinition) *chi.Mux {
 	return router
 }
 
-func NewDynamicRouter(loader Loader) *chi.Mux {
+func NewDynamicRouter(loader core.Loader) *chi.Mux {
 	router := chi.NewRouter()
 	setMiddlewares(router)
 	router.HandleFunc("/*", func(w http.ResponseWriter, r *http.Request) {

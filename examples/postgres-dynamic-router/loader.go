@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/bmviniciuss/forger-golang/internal/core"
-	"github.com/bmviniciuss/forger-golang/mux"
 	"github.com/bmviniciuss/forger-golang/pkg/path"
 )
 
@@ -19,9 +18,9 @@ func NewPostgresLoader(db *sql.DB) *PostgresLoader {
 	return &PostgresLoader{db}
 }
 
-// Ensures PostgresLoader implements mux.
+// Ensures PostgresLoader implements core.Loader
 var (
-	_ mux.Loader = (*PostgresLoader)(nil)
+	_ core.Loader = (*PostgresLoader)(nil)
 )
 
 type dbRouteDefinition struct {
