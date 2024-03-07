@@ -14,6 +14,16 @@ type RouteResponse struct {
 	Delay      time.Duration
 }
 
+func NewRouteResponse(t RouteResponseType, statusCode int, body string, headers map[string]string, delay time.Duration) *RouteResponse {
+	return &RouteResponse{
+		Type:       t,
+		StatusCode: statusCode,
+		Body:       body,
+		Headers:    headers,
+		Delay:      delay,
+	}
+}
+
 func (rr RouteResponse) BuildResponseBody(r *http.Request) (*string, error) {
 	switch rr.Type {
 	case RESPONSE_TYPE_STATIC:

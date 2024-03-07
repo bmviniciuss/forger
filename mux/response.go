@@ -11,7 +11,7 @@ type ErrorResponse struct {
 	Reason  string `json:"reason,omitempty"`
 }
 
-func NewNotFoundResponse() *Response {
+func newNotFoundResponse() *Response {
 	return &Response{
 		StatusCode: 404,
 		Error: ErrorResponse{
@@ -21,7 +21,7 @@ func NewNotFoundResponse() *Response {
 	}
 }
 
-func NewInternalErrorResponse(message, reason string) *Response {
+func newInternalErrorResponse(message, reason string) *Response {
 	return &Response{
 		StatusCode: 500,
 		Error: ErrorResponse{

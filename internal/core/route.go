@@ -5,3 +5,7 @@ type RouteDefinition struct {
 	Method   string
 	Response RouteResponse
 }
+
+func NewRouteDefinition(path, method string, response RouteResponse) *RouteDefinition {
+	return &RouteDefinition{path, method, response}
+}
