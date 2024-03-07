@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/bmviniciuss/forger-golang/internal/core"
+	"github.com/bmviniciuss/forger-golang/internal/core/responses"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 )
@@ -30,7 +31,7 @@ func NewDynamicRouter(loader Loader) *chi.Mux {
 		defs, err := loader.Load(r)
 		if err != nil {
 			log.Default().Printf("Error while getting route definitions from provider: %s", err)
-			render.JSON(w, r, newInternalErrorResponse("Internal Server Error", "Error while getting route definitions from provider"))
+			render.JSON(w, r, responses.NewInternalErrorResponse("Internal Server Error", "Error while getting route definitions from provider"))
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -54,14 +55,14 @@ func registerRoutes(router *chi.Mux, defs []core.RouteDefinition) {
 			fmt.Printf("Handling route %+v\n\n", def)
 			body, err := def.Response.BuildResponseBody(r)
 			if err != nil {
-				render.JSON(w, r, newInternalErrorResponse("Internal Server Error", err.Error()))
+				render.JSON(w, r, responses.NewInternalErrorResponse("Internal Server Error", err.Error()))
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 			resCode := def.Response.BuildResponseStatusCode()
 			resHeaders, err := def.Response.BuildHeaders(r)
 			if err != nil {
-				render.JSON(w, r, newInternalErrorResponse("Internal Server Error", err.Error()))
+				render.JSON(w, r, responses.NewInternalErrorResponse("Internal Server Error", err.Error()))
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
@@ -85,6 +86,6 @@ func setNotFoundHandler(router *chi.Mux) {
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("x-forger-req-end", time.Now().Format(utcLayout))
 		render.Status(r, http.StatusNotFound)
-		render.JSON(w, r, newNotFoundResponse())
+		render.JSON(w, r, responses.NewNotFoundResponse())
 	})
 }
