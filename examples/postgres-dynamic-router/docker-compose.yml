@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    container_name: forger-postgres
+    environment:
+      POSTGRES_USER: forger_user
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: forger
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d
+
+volumes:
+  db:
