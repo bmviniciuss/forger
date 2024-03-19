@@ -35,7 +35,6 @@ func NewDynamicRouter(loader core.Loader) *chi.Mux {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		fmt.Printf("Loaded route definitions: %+v\n\n", defs)
 		subRouter := chi.NewRouter()
 		registerRoutes(subRouter, defs)
 		subRouter.ServeHTTP(w, r)
