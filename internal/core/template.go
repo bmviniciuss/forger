@@ -7,9 +7,10 @@ import (
 
 	"github.com/bmviniciuss/forger-golang/internal/core/generators"
 	"github.com/go-chi/chi/v5"
+	"github.com/tidwall/gjson"
 )
 
-func ProcessString(r *http.Request, src string) (*string, error) {
+func ProcessString(r *http.Request, src string, reqBody *string) (*string, error) {
 	t, err := template.New("").
 		Funcs(template.FuncMap{
 			"uuid": func(options ...interface{}) (string, error) {
@@ -27,6 +28,13 @@ func ProcessString(r *http.Request, src string) (*string, error) {
 			},
 			"time": func(options ...interface{}) (string, error) {
 				return generators.Time(r.Context(), options...)
+			},
+			"requestBody": func(key string) (interface{}, error) {
+				res := gjson.Get(*reqBody, key)
+				if !res.Exists() {
+					return "null", nil
+				}
+				return res.Raw, nil
 			},
 		}).
 		Parse(src)

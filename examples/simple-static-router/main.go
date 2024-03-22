@@ -22,12 +22,13 @@ func main() {
 		},
 		{
 			Path:   "/items/{id}",
-			Method: "GET",
+			Method: "POST",
 			Response: core.RouteResponse{
 				Type:       core.RESPONSE_TYPE_DYNAMIC,
 				StatusCode: http.StatusTeapot,
 				Body: `{
 					"id": "{{ requestVar "id"}}",
+					"item": {{ requestBody "item.prices.0.value" }},
 					"page": "{{ requestQuery "page" }}",
 					"client_id": "{{ requestHeader "client-id" }}",
 					"random_uuid": "{{ uuid "ulid" }}",

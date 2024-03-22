@@ -52,14 +52,7 @@ func registerRoutes(router *chi.Mux, defs []core.RouteDefinition) {
 		fmt.Printf("Registering route [%+v]\n\n", def)
 		router.Method(def.Method, def.Path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("Handling route %+v\n\n", def)
-			body, err := def.Response.BuildResponseBody(r)
-			if err != nil {
-				render.JSON(w, r, responses.NewInternalErrorResponse("Internal Server Error", err.Error()))
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			resCode := def.Response.BuildResponseStatusCode()
-			resHeaders, err := def.Response.BuildHeaders(r)
+			res, err := def.Response.BuildResponse(r)
 			if err != nil {
 				render.JSON(w, r, responses.NewInternalErrorResponse("Internal Server Error", err.Error()))
 				w.WriteHeader(http.StatusInternalServerError)
@@ -68,15 +61,15 @@ func registerRoutes(router *chi.Mux, defs []core.RouteDefinition) {
 			for k, v := range baseHeaders {
 				w.Header().Set(k, v)
 			}
-			for k, v := range resHeaders {
+			for k, v := range res.Headers {
 				w.Header().Set(k, v)
 			}
 			if def.Response.Delay > 0 {
 				time.Sleep(def.Response.Delay)
 			}
 			w.Header().Set("x-forger-req-end", time.Now().Format(utcLayout))
-			w.WriteHeader(resCode)
-			w.Write([]byte(*body))
+			w.WriteHeader(res.StatusCode)
+			w.Write([]byte(*res.Body))
 		}))
 	}
 }
