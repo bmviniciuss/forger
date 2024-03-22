@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/bmviniciuss/forger/internal/core"
+	"github.com/bmviniciuss/forger/core"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )

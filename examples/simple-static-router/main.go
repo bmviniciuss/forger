@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/bmviniciuss/forger/internal/core"
+	"github.com/bmviniciuss/forger/core"
 	"github.com/bmviniciuss/forger/mux"
 )
 
