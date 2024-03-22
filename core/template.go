@@ -5,12 +5,12 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/bmviniciuss/forger/internal/core/generators"
+	"github.com/bmviniciuss/forger/core/generators"
 	"github.com/go-chi/chi/v5"
 	"github.com/tidwall/gjson"
 )
 
-func ProcessString(r *http.Request, src string, reqBody *string) (*string, error) {
+func processString(r *http.Request, src string, reqBody *string) (*string, error) {
 	t, err := template.New("").
 		Funcs(template.FuncMap{
 			"uuid": func(options ...interface{}) (string, error) {

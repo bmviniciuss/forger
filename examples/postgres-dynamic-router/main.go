@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bmviniciuss/forger/internal/core"
+	"github.com/bmviniciuss/forger/core"
 	"github.com/bmviniciuss/forger/mux"
 	"github.com/bmviniciuss/forger/pkg/path"
 	"github.com/jmoiron/sqlx"

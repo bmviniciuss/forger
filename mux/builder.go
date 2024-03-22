@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bmviniciuss/forger/internal/core"
-	"github.com/bmviniciuss/forger/internal/core/responses"
+	"github.com/bmviniciuss/forger/core"
+	"github.com/bmviniciuss/forger/core/responses"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 )
