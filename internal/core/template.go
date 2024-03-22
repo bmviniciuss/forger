@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/bmviniciuss/forger-golang/internal/core/generators"
+	"github.com/bmviniciuss/forger/internal/core/generators"
 	"github.com/go-chi/chi/v5"
 	"github.com/tidwall/gjson"
 )

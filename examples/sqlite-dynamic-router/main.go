@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/bmviniciuss/forger-golang/internal/core"
-	"github.com/bmviniciuss/forger-golang/mux"
-	"github.com/bmviniciuss/forger-golang/pkg/path"
+	"github.com/bmviniciuss/forger/internal/core"
+	"github.com/bmviniciuss/forger/mux"
+	"github.com/bmviniciuss/forger/pkg/path"
 	_ "github.com/mattn/go-sqlite3"
 )
 

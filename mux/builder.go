@@ -1,13 +1,12 @@
 package mux
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/bmviniciuss/forger-golang/internal/core"
-	"github.com/bmviniciuss/forger-golang/internal/core/responses"
+	"github.com/bmviniciuss/forger/internal/core"
+	"github.com/bmviniciuss/forger/internal/core/responses"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 )
@@ -49,9 +48,9 @@ func registerRoutes(router *chi.Mux, defs []core.RouteDefinition) {
 	}
 	for _, route := range defs {
 		def := route
-		fmt.Printf("Registering route [%+v]\n\n", def)
+		log.Printf("Registering route [%+v]\n\n", def)
 		router.Method(def.Method, def.Path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Printf("Handling route %+v\n\n", def)
+			log.Printf("Handling route %+v\n\n", def)
 			res, err := def.Response.BuildResponse(r)
 			if err != nil {
 				render.JSON(w, r, responses.NewInternalErrorResponse("Internal Server Error", err.Error()))

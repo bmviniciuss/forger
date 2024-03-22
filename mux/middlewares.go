@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bmviniciuss/forger-golang/internal/ctx"
+	"github.com/bmviniciuss/forger/internal/ctx"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"

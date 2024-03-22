@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bmviniciuss/forger-golang/internal/core"
-	"github.com/bmviniciuss/forger-golang/mux"
-	"github.com/bmviniciuss/forger-golang/pkg/path"
+	"github.com/bmviniciuss/forger/internal/core"
+	"github.com/bmviniciuss/forger/mux"
+	"github.com/bmviniciuss/forger/pkg/path"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
