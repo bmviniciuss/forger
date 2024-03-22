@@ -28,7 +28,7 @@ func main() {
 				StatusCode: http.StatusTeapot,
 				Body: `{
 					"id": "{{ requestVar "id"}}",
-					"item": {{ requestBody "item.prices.0.value" }},
+					"item": {{ requestBody "item" }},
 					"page": "{{ requestQuery "page" }}",
 					"client_id": "{{ requestHeader "client-id" }}",
 					"random_uuid": "{{ uuid "ulid" }}",
