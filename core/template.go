@@ -5,9 +5,9 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/bmviniciuss/forger/core/extractors"
 	"github.com/bmviniciuss/forger/core/generators"
 	"github.com/go-chi/chi/v5"
-	"github.com/tidwall/gjson"
 )
 
 func processString(r *http.Request, src string, reqBody *string) (*string, error) {
@@ -29,23 +29,7 @@ func processString(r *http.Request, src string, reqBody *string) (*string, error
 			"time": func(options ...interface{}) (string, error) {
 				return generators.Time(r.Context(), options...)
 			},
-			"requestBody": func(params ...interface{}) (interface{}, error) {
-				if len(params) == 0 {
-					return *reqBody, nil
-				}
-				if len(params) > 1 {
-					return nil, ErrInvalidRequestBodyKeysAmount
-				}
-				key, ok := params[0].(string)
-				if !ok {
-					return nil, ErrInvalidRequestBodyArgumentType
-				}
-				res := gjson.Get(*reqBody, key)
-				if !res.Exists() {
-					return "null", nil
-				}
-				return res.Raw, nil
-			},
+			"requestBody": extractors.RequestBody(reqBody),
 		}).
 		Parse(src)
 	if err != nil {
